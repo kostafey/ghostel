@@ -354,7 +354,8 @@ never fewer than one press."
           (kill-local-variable var))))))
 
 (ert-deftest ghostel-test-posn-cell-uses-event-window-metrics ()
-  "Columns use the event window's font; rows come from the buffer line."
+  "Columns use the event window's font and skip its line numbers.
+Rows come from the buffer line."
   (with-temp-buffer
     (let ((buf (current-buffer)))
       ;; Two scrollback lines above a three-row viewport.
