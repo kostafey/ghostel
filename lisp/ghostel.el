@@ -2274,11 +2274,18 @@ frame) it is Y divided by the line height."
 (defun ghostel--forward-scroll-event (event button)
   "Try to forward a scroll EVENT as mouse BUTTON to the terminal.
 Return non-nil if the terminal consumed the event.
+The terminal takes it while its program tracks the mouse, in the terminal
+input modes and in Emacs mode: the terminal stays live there, and under a
+fullscreen program the buffer holds only the visible grid, with nothing
+else to scroll.  Copy mode freezes the terminal, so the wheel scrolls the
+buffer there, as it does for a program that ignores the mouse.
 With `mwheel-coalesce-scroll-events' nil (`pixel-scroll-precision-mode',
 ultra-scroll) every trackpad tick is its own EVENT, so pixel deltas are
 accumulated and one press sent per full row of travel.
 A mouse-wheel notch is never fewer than one press."
-  (when (and event (ghostel--terminal-input-mode-p)
+  (when (and event
+             (or (ghostel--terminal-input-mode-p)
+                 (eq ghostel--input-mode 'emacs))
              (ghostel--mouse-tracking-p ghostel--term))
     (let* ((posn (event-start event))
            (col-row (ghostel--posn-cell posn))
